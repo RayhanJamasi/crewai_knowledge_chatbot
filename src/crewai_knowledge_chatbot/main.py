@@ -181,20 +181,23 @@ def run():
         list_of_reports_qa = glob.glob(f'{current_dir}/src/crewai_knowledge_chatbot/garak_runs_qa/*.report.jsonl')
 
         latest_qa_report = max(list_of_reports_qa, key=os.path.getmtime)
+        print(latest_qa_report)
 
-        # #opening the report and parsing it
-        # with open(latest_qa_report, "r") as report:
-        #     report_info = json.load(report)
+        report_info = []
 
-        # for dict_log in report_info:
-        #     try:
-        #         if dict_log["entry_type"] == "eval":
-        #             print("\nhi\n")
-        #             # probe_info_list_qa.append([dict_log["probe"], dict_log["detector"]])
-        #             # results_qa.append([dict_log])
-        #     except KeyError:
-        #         pass
+        #opening the report and parsing it
+        with open(latest_qa_report, "r") as report:
+            for line in report:
+                line_info = json.loads(line)
+                report_info.append(line_info)
 
+        for dict_log in report_info:
+            try:
+                if dict_log["entry_type"] == "eval":
+                    probe_info_list_qa.append([dict_log["probe"], dict_log["detector"]])
+                    results_qa.append([dict_log["passed"], dict_log["total"]])
+            except KeyError:
+                pass
 
     #intro message
     print("Welcome to TD Bank, how may I help you? (type \"voice\" to do speech to text for 6 seconds)")
