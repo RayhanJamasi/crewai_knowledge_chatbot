@@ -1,0 +1,7 @@
+reporting_task:
+ description: >
+   Use the following memories to assist with answering the user query if relevant - {memories}
+   If not, summarize research findings in bullet points, focusing on clarity, accuracy, and compliance.
+ expected_output: >
+   Bullet points summarizing the topic.
+ agent: reporting_analyst

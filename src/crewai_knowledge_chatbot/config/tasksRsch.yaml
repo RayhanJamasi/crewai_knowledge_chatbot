@@ -1,0 +1,14 @@
+research_task:
+ description: >
+    Use the following memories (user and assistant) to assist with answering the user query if relevant
+
+
+    {memories}
+
+
+    After, infer how what {topic} means in context of the conversation with the memories you've been given.
+    Than research the {topic} using only relevant history to make sure your memories are up to date
+
+ expected_output: >
+   A general summary with no sensitive data, ensuring relevance to the topic
+ agent: researcher

@@ -1,0 +1,7 @@
+support_task:
+ description: >
+   Perform a final review of the research paper for compliance and accuracy, 
+   ensuring it follows privacy guidelines.
+ expected_output: >
+   Finalized compliant summary that was given from the summarizer agent 
+ agent: support_QA_agent

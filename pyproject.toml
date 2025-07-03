@@ -1,0 +1,21 @@
+[project]
+name = "crewai_knowledge_chatbot"
+version = "0.1.0"
+description = "crewai_knowledge_chatbot using crewAI"
+authors = [
+    { name = "Rayhan Jamasi", email = "Rayhanjamasi@gmail.com" },
+]
+requires-python = ">=3.10,<=3.13"
+dependencies = [
+    "crewai[tools]>=0.28.8",
+]
+
+[project.scripts]
+crewai_knowledge_chatbot = "crewai_knowledge_chatbot.main:run"
+run_crew = "crewai_knowledge_chatbot.main:run"
+
+[build-system]
+requires = [
+    "hatchling",
+]
+build-backend = "hatchling.build"
