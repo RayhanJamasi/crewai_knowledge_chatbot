@@ -154,12 +154,11 @@ def run():
     # printing the requirements that need to be
     print(requirements_printed_msg)
     
-    current_dir = os.getcwd()
+    current_dir = os.getcwd() # get current directory
     probe_info_list_qa = [] #each element looks like: [<probe_name>, <detector_name>]
     results_qa = [] #each element looks like: [<tests_passed>, <total_tests_ran>]
 
     #checking which agents need to be checked for security and accessing that specific agent
-
     if "Security" in requirements[0].strip():
         pass
 
@@ -167,8 +166,6 @@ def run():
         pass
     
     if "Security" in requirements[2].strip():
-
-        
         time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         prefix =f"{current_dir}/src/crewai_knowledge_chatbot/garak_runs_qa/{time}log"
 
@@ -181,7 +178,6 @@ def run():
         list_of_reports_qa = glob.glob(f'{current_dir}/src/crewai_knowledge_chatbot/garak_runs_qa/*.report.jsonl')
 
         latest_qa_report = max(list_of_reports_qa, key=os.path.getmtime)
-        print(latest_qa_report)
 
         report_info = []
 
