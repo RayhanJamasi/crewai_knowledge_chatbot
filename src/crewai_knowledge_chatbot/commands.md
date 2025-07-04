@@ -49,4 +49,23 @@ garak --model_type rest -G garak_configs/garak_config_guard_qa.json \
 
 ### details needed for CrewAI and Asenion Integration ###
 
+API Url
 
+Bearer Token
+
+headers = {
+    "Authorization": f"Bearer {BEARER_TOKEN}",
+    "Content-Type": "application/json"
+}
+
+required inputs --> retried from requests.get(f"{API_URL}/inputs") --> parse it with .json()
+
+
+
+# example input:
+kickoff_data = {
+    "inputs": {
+        "topic": "AI trends",  #replace it with the actual inputs
+        "year": "2025"
+    }
+}
