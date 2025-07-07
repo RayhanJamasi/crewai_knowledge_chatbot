@@ -166,34 +166,35 @@ def run():
         pass
     
     if "Security" in requirements[2].strip():
-        time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        prefix =f"{current_dir}/src/crewai_knowledge_chatbot/garak_runs_qa/{time}log"
+        pass
+        # time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        # prefix =f"{current_dir}/src/crewai_knowledge_chatbot/garak_runs_qa/{time}log"
 
-        os.system("pip install --upgrade tokenizers")
-        os.system(f"garak --model_type rest -G src/crewai_knowledge_chatbot/garak_configs/garak_config_guard_qa.json \
-                    --probes lmrc.Profanity \
-                    --generations 2 \
-                    --report_prefix='{prefix}'") 
+        # os.system("pip install --upgrade tokenizers")
+        # os.system(f"garak --model_type rest -G src/crewai_knowledge_chatbot/garak_configs/garak_config_guard_qa.json \
+        #             --probes lmrc.Profanity \
+        #             --generations 2 \
+        #             --report_prefix='{prefix}'") 
 
-        list_of_reports_qa = glob.glob(f'{current_dir}/src/crewai_knowledge_chatbot/garak_runs_qa/*.report.jsonl')
+        # list_of_reports_qa = glob.glob(f'{current_dir}/src/crewai_knowledge_chatbot/garak_runs_qa/*.report.jsonl')
 
-        latest_qa_report = max(list_of_reports_qa, key=os.path.getmtime)
+        # latest_qa_report = max(list_of_reports_qa, key=os.path.getmtime)
 
-        report_info = []
+        # report_info = []
 
-        #opening the report and parsing it
-        with open(latest_qa_report, "r") as report:
-            for line in report:
-                line_info = json.loads(line)
-                report_info.append(line_info)
+        # #opening the report and parsing it
+        # with open(latest_qa_report, "r") as report:
+        #     for line in report:
+        #         line_info = json.loads(line)
+        #         report_info.append(line_info)
 
-        for dict_log in report_info:
-            try:
-                if dict_log["entry_type"] == "eval":
-                    probe_info_list_qa.append([dict_log["probe"], dict_log["detector"]])
-                    results_qa.append([dict_log["passed"], dict_log["total"]])
-            except KeyError:
-                pass
+        # for dict_log in report_info:
+        #     try:
+        #         if dict_log["entry_type"] == "eval":
+        #             probe_info_list_qa.append([dict_log["probe"], dict_log["detector"]])
+        #             results_qa.append([dict_log["passed"], dict_log["total"]])
+        #     except KeyError:
+        #         pass
 
     #intro message
     print("Welcome to TD Bank, how may I help you? (type \"voice\" to do speech to text for 6 seconds)")
@@ -275,17 +276,18 @@ def run():
                 #launching the crew
                 response = crew_instance.kickoff(inputs=inputs)
 
-                return {
-                    "final_response": str(response),
-                    "garak_probe_info": probe_info_list_qa,
-                    "garak_results": results_qa,
-                    "security_analysis": {
-                        "researcher_needs_security": "Security" in requirements[0].strip(),
-                        "summarizer_needs_security": "Security" in requirements[1].strip(),
-                        "support_needs_security": "Security" in requirements[2].strip()
-                    }
-                }
+                print(f"TD Assistant: {response}")
 
+                # return {
+                #     "final_response": str(response),
+                #     "garak_probe_info": probe_info_list_qa,
+                #     "garak_results": results_qa,
+                #     "security_analysis": {
+                #         "researcher_needs_security": "Security" in requirements[0].strip(),
+                #         "summarizer_needs_security": "Security" in requirements[1].strip(),
+                #         "support_needs_security": "Security" in requirements[2].strip()
+                #     }
+                # }
 
             #adding the exchange between user and chatbot to short term memory 
             history.append(f"User: {user_input}")
