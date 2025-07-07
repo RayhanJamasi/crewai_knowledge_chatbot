@@ -275,8 +275,17 @@ def run():
                 #launching the crew
                 response = crew_instance.kickoff(inputs=inputs)
 
-                #printing the response
-                print(f"\nAssistant: {response}\n\n")
+                return {
+                    "final_response": str(response),
+                    "garak_probe_info": probe_info_list_qa,
+                    "garak_results": results_qa,
+                    "security_analysis": {
+                        "researcher_needs_security": "Security" in requirements[0].strip(),
+                        "summarizer_needs_security": "Security" in requirements[1].strip(),
+                        "support_needs_security": "Security" in requirements[2].strip()
+                    }
+                }
+
 
             #adding the exchange between user and chatbot to short term memory 
             history.append(f"User: {user_input}")

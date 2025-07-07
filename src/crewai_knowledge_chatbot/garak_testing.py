@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 import os
 from fastapi.responses import HTMLResponse
 
-
 app = FastAPI()
 
 #loading the environment variables from the .env file
