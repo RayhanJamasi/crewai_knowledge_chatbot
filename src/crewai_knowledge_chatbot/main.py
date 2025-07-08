@@ -40,58 +40,6 @@ import threading
 import yaml
 from pathlib import Path
 
-#setting base directory to location of main
-base_dir = Path(__file__).resolve().parent
-
-#getting path for yaml files
-agents_path = base_dir / "config" / "agents.yaml"
-tasks_path = base_dir / "config" / "tasks.yaml"
-
-#loading yaml files
-with agents_path.open() as agent_file:
-    agents_data = yaml.safe_load(agent_file)
-
-with tasks_path.open() as task_file:
-    tasks_data = yaml.safe_load(task_file)
-
-#getting the info from the agents and task file which will be given to the master agent
-research_agent_info = agents_data['researcher']
-research_task_info = tasks_data['research_task']
-reporting_analyst_agent_info = agents_data['reporting_analyst']
-reporting_analyst_task_info = tasks_data['reporting_task']
-support_QA_agent_info = agents_data['support_QA_agent']
-support_QA_agent_task_info = tasks_data['support_task']
-
-#adding them all to the crew_info array
-crew_info = [
-    research_agent_info,
-    research_task_info,
-    "\n\n",
-    reporting_analyst_agent_info,
-    reporting_analyst_task_info,
-    "\n\n",
-    support_QA_agent_info,
-    support_QA_agent_task_info
-]
-
-#sensitive categories that the master agent will have
-sensitive_info = [
-    "Hate / Identity Hate",
-    "Sexual",
-    "Violence",
-    "Suicide and Self Harm",
-    "Threat",
-    "Sexual Minor",
-    "Guns / Illegal Weapons",
-    "Controlled / Regulated Substances",
-    "Criminal Planning / Confessions",
-    "PII (Personally Identifiable Information)",
-    "Harassment",
-    "Profanity",
-    "Security",
-    "Bias"
-]
-
 #loading whisper base english model
 model = whisper.load_model("base.en")
 
@@ -118,7 +66,6 @@ client = MemoryClient()
 #creating an instance of the crews outside the run method, this way a new instance of the crew
 #is not needed ever time I run the code
 crew_instance = CrewaiKnowledgeChatbotCrew().crew()
-MA_crew_instance = CrewaiMasterAgentCrew().crew()
 
 #if memory_type = 0, it will use short term memory. if memory_type = 1, it 
 #will use long term memory
@@ -128,73 +75,6 @@ memory_type = 0
 def run():
     #creating array that holds short term history
     history = []
-
-    MA_inputs = { 
-            "crew_info": f"{crew_info}",
-            "sensitive_info": f"{sensitive_info}",
-                }
-
-    MA_response = MA_crew_instance.kickoff(inputs=MA_inputs)
-
-    #splitting the result and assigning it to each variable
-    researcher, summarizer, support = str(MA_response).split(",", 2)
-
-    # #adding the categories for each agent to an array
-    requirements = [researcher, summarizer, support]
-
-    #formatting the requirements into one message
-    requirements_printed_msg = f"""
-    \n\nThe requirements needed to download for each agent are:
-    
-    Researcher Agent: {requirements[0].strip()}\n
-    Summarizer Agent: {requirements[1].strip()}\n
-    Support QA Agent: {requirements[2].strip()}\n\n
-    """
-
-    # printing the requirements that need to be
-    print(requirements_printed_msg)
-    
-    current_dir = os.getcwd() # get current directory
-    probe_info_list_qa = [] #each element looks like: [<probe_name>, <detector_name>]
-    results_qa = [] #each element looks like: [<tests_passed>, <total_tests_ran>]
-
-    #checking which agents need to be checked for security and accessing that specific agent
-    if "Security" in requirements[0].strip():
-        pass
-
-    if "Security" in requirements[1].strip():
-        pass
-    
-    if "Security" in requirements[2].strip():
-        pass
-        # time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        # prefix =f"{current_dir}/src/crewai_knowledge_chatbot/garak_runs_qa/{time}log"
-
-        # os.system("pip install --upgrade tokenizers")
-        # os.system(f"garak --model_type rest -G src/crewai_knowledge_chatbot/garak_configs/garak_config_guard_qa.json \
-        #             --probes lmrc.Profanity \
-        #             --generations 2 \
-        #             --report_prefix='{prefix}'") 
-
-        # list_of_reports_qa = glob.glob(f'{current_dir}/src/crewai_knowledge_chatbot/garak_runs_qa/*.report.jsonl')
-
-        # latest_qa_report = max(list_of_reports_qa, key=os.path.getmtime)
-
-        # report_info = []
-
-        # #opening the report and parsing it
-        # with open(latest_qa_report, "r") as report:
-        #     for line in report:
-        #         line_info = json.loads(line)
-        #         report_info.append(line_info)
-
-        # for dict_log in report_info:
-        #     try:
-        #         if dict_log["entry_type"] == "eval":
-        #             probe_info_list_qa.append([dict_log["probe"], dict_log["detector"]])
-        #             results_qa.append([dict_log["passed"], dict_log["total"]])
-        #     except KeyError:
-        #         pass
 
     #intro message
     print("Welcome to TD Bank, how may I help you? (type \"voice\" to do speech to text for 6 seconds)")
@@ -277,17 +157,6 @@ def run():
                 response = crew_instance.kickoff(inputs=inputs)
 
                 print(f"TD Assistant: {response}")
-
-                # return {
-                #     "final_response": str(response),
-                #     "garak_probe_info": probe_info_list_qa,
-                #     "garak_results": results_qa,
-                #     "security_analysis": {
-                #         "researcher_needs_security": "Security" in requirements[0].strip(),
-                #         "summarizer_needs_security": "Security" in requirements[1].strip(),
-                #         "support_needs_security": "Security" in requirements[2].strip()
-                #     }
-                # }
 
             #adding the exchange between user and chatbot to short term memory 
             history.append(f"User: {user_input}")
