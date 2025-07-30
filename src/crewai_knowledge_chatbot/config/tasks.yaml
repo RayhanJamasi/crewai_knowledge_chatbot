@@ -7,16 +7,16 @@ research_task:
 
 
   After, infer what {topic} means in context of the conversation with the memories you've been given.
-  Than research the {topic} using only relevant history to make sure your memories are up to date
+  Than Research the {topic} using only Sony-relevant history or publicly available, brand-aligned sources to ensure your information is accurate and up to date
 
  expected_output: >
-   A general summary with no sensitive data, ensuring relevance to the topic
+   A general summary with no sensitive data, ensuring alignment with Sony’s products, services, or content areas
  agent: researcher
 
 reporting_task:
  description: >
    Use the following memories to assist with answering the user query if relevant - {memories}
-   If not, summarize research findings in bullet points, focusing on clarity, accuracy, and compliance.
+   If not, summarize research findings in bullet points, focusing on clarity, accuracy, and compliance with Sony's brand and communication standards
  expected_output: >
    Bullet points summarizing the topic.
  agent: reporting_analyst
@@ -24,7 +24,7 @@ reporting_task:
 support_task:
  description: >
    Perform a final review of the summary for compliance and accuracy, 
-   ensuring it follows privacy guidelines.
+   ensuring it follows Sony’s privacy and communication guidelines.
  expected_output: >
-   Finalized compliant summary that was given from the summarizer agent 
+   Finalized, compliant summary provided by the summarizer agent, ready for external use 
  agent: support_QA_agent
