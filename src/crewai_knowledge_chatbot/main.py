@@ -33,12 +33,10 @@ from datetime import datetime
 import whisper
 import platform
 from dotenv import load_dotenv
-from crewai_knowledge_chatbot.crew import CrewaiKnowledgeChatbotCrew, CrewaiMasterAgentCrew
+from crewai_knowledge_chatbot.crew import CrewaiKnowledgeChatbotCrew
 from mem0 import MemoryClient
 from openai import OpenAI
 import threading
-import yaml
-from pathlib import Path
 
 #loading whisper base english model
 model = whisper.load_model("base.en")
@@ -77,7 +75,7 @@ def run():
     history = []
 
     #intro message
-    print("Welcome to TD Bank, how may I help you? (type \"voice\" to do speech to text for 6 seconds)")
+    print("Welcome to Sony, how may I help you? (type \"voice\" to do speech to text for 6 seconds)")
 
     #for loop which contains the conversation logic
     while True:
@@ -117,14 +115,14 @@ def run():
             if memory_type == 1:
 
                 #searches semantically for top 2 best results from both the user and chatbot
-                past_memories_TD = client.search(user_input, user_id="TD_Assistant")[:2]
-                past_memories_user = client.search(user_input, user_id="User")[:2]
+                past_memories_sony = client.search(user_input, user_id="Sony_Assistant")[:2]
+                past_memories_user = client.search(user_input, user_id="Sony_Client")[:2]
 
                 #declaring past_memories_str which will hold the snippets of long-term memory
                 past_memories_str = ""
 
                 #going through the memory field for all 4 memories
-                for i, memory in enumerate(past_memories_TD + past_memories_user):
+                for i, memory in enumerate(past_memories_sony + past_memories_user):
 
                     #adding them to the variable
                     past_memories_str += f"Memory {i+1}: {memory['memory']}\n\n"
@@ -156,16 +154,16 @@ def run():
                 #launching the crew
                 response = crew_instance.kickoff(inputs=inputs)
 
-                print(f"TD Assistant: {response}")
+                print(f"Sony Assistant: {response}")
 
             #adding the exchange between user and chatbot to short term memory 
-            history.append(f"User: {user_input}")
-            history.append(f"Assistant: {response}")
+            history.append(f"Sony_Client: {user_input}")
+            history.append(f"Sony_Assistant: {response}")
 
         #if the guardrail agent did not approve of prompt and/or the prompt was empty:
         #the chatbot outputs this hard coded message asking for clarification
         else:
-            print("\nI'm afraid I can only assist with proper questions related to banking and finance. Could you clarify your request?")
+            print("\nI'm afraid I can only assist with proper questions related to Sony's products, services, or ecosystems. Could you clarify your request?")
 
 #voice to text method which uses FFmpeg and WhisperAI
 def voice_to_text():
@@ -202,16 +200,18 @@ def voice_to_text():
 #agent also will give a rephrased prompt of what was said and help add context for the agents
 def is_question_understandable(user_input, last_3_exchanges):
     system_msg = """
-    You work at TD Bank as a compliance-focused prompt reviewer. Your job is to filter out
-    irrelevant or risky topics before they reach internal systems. Determine if the user input
-    is relevant to TD, TD services, banking or finance. Your other job is to look at the user prompt
+    You work at Sony as a compliance-focused prompt reviewer. Your job is to filter out
+    irrelevant or risky topics before they reach Sony's internal systems. Determine if the user input
+    is relevant to Sony's products, services, or ecosystems — including (but not limited to) PlayStation, 
+    consumer electronics (e.g. TVs, cameras, audio devices), entertainment content (e.g. music, film, TV), 
+    imaging technologies, or Sony support services. Your other job is to look at the user prompt
     and rephrase it based off the memories you've been given (if any). Use the current chat history to help
     determine if the user is continuing a relevant conversation to the conditions mentioned before.
-    For example, they may ask question which may not be finance related directly, but by referencing
-    the memories you've been given, in reality, it actually was finance-related. Use that knowledge to
+    For example, they may ask question which may not be related to Sony directly, but by referencing
+    the memories you've been given, in reality, it actually was Sony-related. Use that knowledge to
     rephrase the prompt and and give it context to what the user is actually asking.
     
-    If it's not clearly related, or it's  incoherent, fragmented, or vague, respond with (case sensitive):
+    If it's not clearly related, or it's incoherent, fragmented, or vague, respond with (case sensitive):
     no, <reason>
     If it was related, respond exactly with (case sensitive):
     yes, <rephrased_prompt>
@@ -243,10 +243,10 @@ def is_question_understandable(user_input, last_3_exchanges):
 #not use this method, it can take up to 25 seconds before the user can type a new output
 def add_memories(user_input, response, client):
     def add_user_memories():
-        client.add(user_input, user_id = "User")
+        client.add(user_input, user_id = "Sony_Client")
 
     def add_chatbot_memories():
-        client.add(str(response), user_id = "TD_Assistant")
+        client.add(str(response), user_id = "Sony_Assistant")
 
     threading.Thread(target = add_user_memories).start()
     threading.Thread(target = add_chatbot_memories).start()
